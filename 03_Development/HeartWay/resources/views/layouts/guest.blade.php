@@ -22,6 +22,12 @@
                 </a>
             </div>
 
+            @if(session('error'))
+                <div class="w-full sm:max-w-md mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
                 {{ $slot }}
             </div>

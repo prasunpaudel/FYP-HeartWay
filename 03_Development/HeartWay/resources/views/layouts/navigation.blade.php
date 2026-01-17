@@ -15,6 +15,12 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
+                    @if(in_array(Auth::user()->role, ['superadmin', 'school_admin']))
+                        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                            {{ Auth::user()->role === 'superadmin' ? __('Manage Admins') : __('Manage Parents') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -70,6 +76,12 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
+            @if(in_array(Auth::user()->role, ['superadmin', 'school_admin']))
+                <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                    {{ Auth::user()->role === 'superadmin' ? __('Manage Admins') : __('Manage Parents') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

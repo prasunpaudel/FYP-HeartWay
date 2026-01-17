@@ -26,6 +26,13 @@
                                     <h4 class="font-weight-bolder">Login to you Account</h4>
                                     <p class="mb-0">Enter your email and password to sign in</p>
                                 </div>
+                                @if(session('error'))
+                                    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-4">
+                                        <div class="bg-red-100 border border-red-400 text-red-500 px-4 py-3 rounded" style="color:red;border:1px sold red;">
+                                            {{ session('error') }}
+                                        </div>
+                                    </div>
+                                @endif
                                 <div class="card-body">
                                     <form role="form" method="POST" action="{{ route('login') }}">
                                         @csrf

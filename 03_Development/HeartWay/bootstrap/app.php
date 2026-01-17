@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -11,7 +13,19 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'role' => RoleMiddleware::class,
+        ]);
+
+        $middleware->redirectGuestsTo(function (Request $request) {
+            session()->flash('error', 'Please login to access this page.');
+            return route('login');
+        });
+
+        $middleware->redirectUsersTo(function (Request $request) {
+            session()->flash('error', 'You are already logged in.');
+            return route('dashboard');
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
