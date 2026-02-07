@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Services\OtpService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,10 @@ use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
+    public function __construct(
+        private OtpService $otpService
+    ) {}
+
     /**
      * Display the login view.
      */
@@ -20,15 +25,23 @@ class AuthenticatedSessionController extends Controller
     }
 
     /**
-     * Handle an incoming authentication request.
+     * Handle an incoming authentication request: validate credentials, send OTP, redirect to verify.
      */
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
 
-        $request->session()->regenerate();
+        $email = $request->input('email');
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        $request->session()->put('otp_email', $email);
+        $request->session()->put('otp_purpose', 'login');
+        $request->session()->put('otp_remember', $request->boolean('remember'));
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $this->otpService->send($email, 'login');
+
+        return redirect()->route('otp.show');
     }
 
     /**
